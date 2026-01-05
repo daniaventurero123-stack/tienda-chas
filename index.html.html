@@ -1,0 +1,3641 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chas Store - Tienda Online</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #7b2cbf;
+            --secondary: #9d4edd;
+            --accent: #ff6d00;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #38b000;
+            --warning: #ff9e00;
+            --danger: #d90429;
+            --common: #6c757d;
+            --rare: #0077b6;
+            --legendary: #ff5400;
+            --mythical: #9d00ff;
+            --exclusive: #ffd000;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: var(--light);
+            min-height: 100vh;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        /* Pantalla de Login */
+        #login-screen {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            background: radial-gradient(circle at center, #0f3460 0%, #1a1a2e 100%);
+        }
+        
+        .login-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+        
+        .store-title {
+            font-size: 3.5rem;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 10px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .store-subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            color: #b8b8b8;
+            font-weight: 300;
+        }
+        
+        .input-group {
+            margin-bottom: 25px;
+            text-align: left;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #ddd;
+        }
+        
+        .input-group input {
+            width: 100%;
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(123, 44, 191, 0.3);
+        }
+        
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white;
+            width: 100%;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(123, 44, 191, 0.4);
+        }
+        
+        .message {
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: center;
+            font-weight: 500;
+        }
+        
+        .message.error {
+            background-color: rgba(217, 4, 41, 0.2);
+            color: #ff6b8b;
+            border: 1px solid rgba(217, 4, 41, 0.5);
+        }
+        
+        .message.success {
+            background-color: rgba(56, 176, 0, 0.2);
+            color: #90ff64;
+            border: 1px solid rgba(56, 176, 0, 0.5);
+        }
+        
+        /* Pantalla principal de la tienda */
+        #app-screen {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Header */
+        .app-header {
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--primary);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .app-title {
+            font-size: 2rem;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 700;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .balance-container {
+            background: rgba(123, 44, 191, 0.2);
+            border-radius: 50px;
+            padding: 8px 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid rgba(123, 44, 191, 0.5);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .balance-container:hover {
+            background: rgba(123, 44, 191, 0.3);
+        }
+        
+        .balance-label {
+            font-weight: 600;
+            color: #ddd;
+        }
+        
+        .balance-amount {
+            font-weight: 700;
+            color: var(--accent);
+        }
+        
+        .chas-icon {
+            color: gold;
+            font-size: 1.2rem;
+        }
+        
+        .header-buttons {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .header-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 10px;
+            padding: 10px 20px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+        }
+        
+        .header-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .btn-inventory {
+            background: linear-gradient(45deg, #4361ee, #3a0ca3);
+        }
+        
+        .btn-redeem {
+            background: linear-gradient(45deg, #ff9e00, #ff5400);
+        }
+        
+        .btn-settings {
+            background: linear-gradient(45deg, #7209b7, #560bad);
+        }
+        
+        .btn-cart {
+            background: linear-gradient(45deg, #2ec4b6, #20a39e);
+        }
+        
+        .btn-purchases {
+            background: linear-gradient(45deg, #ff6d00, #ff9e00);
+        }
+        
+        .cart-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--danger);
+            color: white;
+            font-size: 0.7rem;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        /* Contenido principal */
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            display: flex;
+        }
+        
+        /* Sidebar con categorías y buscador */
+        .store-sidebar {
+            width: 280px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 15px;
+            padding: 25px;
+            margin-right: 30px;
+            height: fit-content;
+            position: sticky;
+            top: 120px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .sidebar-title {
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            color: white;
+            border-left: 4px solid var(--primary);
+            padding-left: 10px;
+        }
+        
+        .search-container {
+            margin-bottom: 25px;
+            position: relative;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 12px 15px 12px 45px;
+            border-radius: 10px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #aaa;
+        }
+        
+        .categories-list {
+            list-style: none;
+            margin-bottom: 30px;
+        }
+        
+        .category-item {
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .category-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .category-item.active {
+            background: var(--primary);
+            font-weight: 600;
+        }
+        
+        .category-count {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+        }
+        
+        .category-type {
+            font-size: 0.7rem;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 2px 6px;
+            border-radius: 8px;
+            margin-left: 5px;
+        }
+        
+        .type-cart {
+            background: rgba(46, 196, 182, 0.3);
+            color: #2ec4b6;
+        }
+        
+        .type-inventory {
+            background: rgba(67, 97, 238, 0.3);
+            color: #4361ee;
+        }
+        
+        /* Publicidad en sidebar */
+        .ad-container {
+            margin-top: 30px;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .ad-container:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .ad-label {
+            background: var(--accent);
+            color: white;
+            padding: 5px 10px;
+            font-size: 0.8rem;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        .ad-content {
+            padding: 20px;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.3);
+            min-height: 150px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .ad-image {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .ad-default {
+            font-size: 2rem;
+            color: #aaa;
+            margin-bottom: 10px;
+        }
+        
+        .ad-text {
+            color: #ddd;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+        
+        /* Contenedor de productos */
+        .store-products {
+            flex: 1;
+        }
+        
+        .store-section {
+            margin-bottom: 40px;
+        }
+        
+        .section-title {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #fff;
+            border-left: 5px solid var(--primary);
+            padding-left: 15px;
+        }
+        
+        /* Productos */
+        .products-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+        }
+        
+        .product-card {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+            border-color: var(--primary);
+        }
+        
+        .product-card.purchased {
+            opacity: 0.6;
+            filter: grayscale(0.5);
+        }
+        
+        .product-card.hidden-product {
+            opacity: 0.4;
+            border-color: var(--danger);
+        }
+        
+        .product-card.sale {
+            border: 2px solid var(--accent);
+        }
+        
+        .product-badges {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            z-index: 2;
+        }
+        
+        .product-badge {
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .sale-badge {
+            background: var(--accent);
+            color: white;
+        }
+        
+        .limited-badge {
+            background: var(--danger);
+            color: white;
+        }
+        
+        .hidden-badge {
+            background: var(--common);
+            color: white;
+        }
+        
+        .product-image-container {
+            height: 180px;
+            width: 100%;
+            background: linear-gradient(45deg, #3a0ca3, #4361ee);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .product-image-emoji {
+            font-size: 4rem;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            width: 100%;
+        }
+        
+        .product-image-url {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        
+        .product-info {
+            padding: 20px;
+        }
+        
+        .product-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+        
+        .product-name {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: white;
+        }
+        
+        .product-price {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+        
+        .product-original-price {
+            text-decoration: line-through;
+            color: #aaa;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+        
+        .product-current-price {
+            background: linear-gradient(45deg, var(--accent), #ff9e00);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .product-category {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            margin-bottom: 10px;
+            color: #ccc;
+        }
+        
+        .product-colors {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        
+        .color-circle {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .product-rarity {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+        
+        .rarity-common {
+            color: var(--common);
+        }
+        
+        .rarity-rare {
+            color: var(--rare);
+        }
+        
+        .rarity-legendary {
+            color: var(--legendary);
+        }
+        
+        .rarity-mythical {
+            color: var(--mythical);
+        }
+        
+        .rarity-exclusive {
+            color: var(--exclusive);
+        }
+        
+        .product-stock {
+            font-size: 0.9rem;
+            color: #aaa;
+            margin-bottom: 10px;
+        }
+        
+        .stock-low {
+            color: var(--danger);
+            font-weight: 600;
+        }
+        
+        .product-rating {
+            color: #ffd000;
+            margin-bottom: 15px;
+        }
+        
+        .product-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn-buy {
+            flex: 1;
+            background: linear-gradient(45deg, var(--success), #38b000);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-buy:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(56, 176, 0, 0.4);
+        }
+        
+        .btn-buy:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .btn-edit {
+            background: linear-gradient(45deg, #4361ee, #3a0ca3);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-edit:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.4);
+        }
+        
+        /* Paneles modales */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal-content {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-radius: 20px;
+            padding: 30px;
+            width: 90%;
+            max-width: 900px;
+            max-height: 90vh;
+            overflow-y: auto;
+            border: 2px solid var(--primary);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+            position: relative;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+        
+        .modal-title {
+            font-size: 1.8rem;
+            color: white;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.8rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .close-modal:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: rotate(90deg);
+        }
+        
+        /* Panel secreto con pestañas */
+        .secret-panel-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 10px;
+        }
+        
+        .secret-tab {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .secret-tab:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .secret-tab.active {
+            background: var(--primary);
+        }
+        
+        .secret-tab-content {
+            display: none;
+        }
+        
+        .secret-tab-content.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #ddd;
+        }
+        
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            font-size: 1rem;
+        }
+        
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .checkbox-group input {
+            width: auto;
+        }
+        
+        .image-preview {
+            width: 100%;
+            height: 150px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            margin-top: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .image-preview-emoji {
+            font-size: 4rem;
+        }
+        
+        .image-preview-img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            display: none;
+        }
+        
+        .image-options {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .image-option-btn {
+            flex: 1;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .image-option-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .image-option-btn.active {
+            background: var(--primary);
+        }
+        
+        .url-input-container, .emoji-input-container {
+            display: none;
+        }
+        
+        .url-input-container.active, .emoji-input-container.active {
+            display: block;
+        }
+        
+        .btn-submit {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+            width: 100%;
+        }
+        
+        .btn-submit:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(123, 44, 191, 0.4);
+        }
+        
+        /* Panel secreto - secciones */
+        .secret-section {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .secret-section h3 {
+            margin-bottom: 15px;
+            color: var(--accent);
+            border-left: 4px solid var(--accent);
+            padding-left: 10px;
+        }
+        
+        /* Gestión de cuentas */
+        .accounts-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+        
+        .account-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .account-info {
+            flex: 1;
+        }
+        
+        .account-username {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+        
+        .account-password {
+            font-family: monospace;
+            color: #aaa;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+            letter-spacing: 2px;
+        }
+        
+        .account-stats {
+            font-size: 0.8rem;
+            color: #aaa;
+        }
+        
+        .account-balance {
+            color: var(--accent);
+            font-weight: 600;
+        }
+        
+        .account-status {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .status-active {
+            background: rgba(56, 176, 0, 0.2);
+            color: #90ff64;
+        }
+        
+        .status-blocked {
+            background: rgba(217, 4, 41, 0.2);
+            color: #ff6b8b;
+        }
+        
+        .account-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .btn-block, .btn-unblock, .btn-view-purchases {
+            padding: 8px 15px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.8rem;
+        }
+        
+        .btn-block {
+            background: var(--danger);
+            color: white;
+        }
+        
+        .btn-unblock {
+            background: var(--success);
+            color: white;
+        }
+        
+        .btn-view-purchases {
+            background: linear-gradient(45deg, #4361ee, #3a0ca3);
+            color: white;
+        }
+        
+        /* Estadísticas de ventas */
+        .sales-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+        
+        .stat-sales {
+            color: var(--success);
+        }
+        
+        .stat-refunds {
+            color: var(--danger);
+        }
+        
+        .stat-total {
+            color: var(--accent);
+        }
+        
+        .stat-users {
+            color: var(--primary);
+        }
+        
+        /* Inventario */
+        .inventory-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .inventory-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            transition: all 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+        
+        .inventory-item:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
+        }
+        
+        .inventory-item-image-container {
+            height: 100px;
+            width: 100%;
+            background: linear-gradient(45deg, #3a0ca3, #4361ee);
+            border-radius: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        
+        .inventory-item-emoji {
+            font-size: 2.5rem;
+            color: white;
+        }
+        
+        .inventory-item-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        
+        .collection-code {
+            background: rgba(123, 44, 191, 0.2);
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            margin: 10px 0;
+            display: inline-block;
+            border: 1px dashed var(--primary);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .collection-code:hover {
+            background: rgba(123, 44, 191, 0.4);
+            transform: scale(1.05);
+        }
+        
+        .category-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--primary);
+            color: white;
+            font-size: 0.7rem;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+        
+        .btn-use {
+            background: linear-gradient(45deg, #4361ee, #3a0ca3);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        .btn-use:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.4);
+        }
+        
+        .btn-use:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        /* Lista de productos en panel */
+        .products-management-list {
+            max-height: 400px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+        
+        .product-management-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .product-management-info {
+            flex: 1;
+        }
+        
+        .product-management-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+        
+        .product-management-category {
+            font-size: 0.8rem;
+            color: #aaa;
+            margin-bottom: 5px;
+        }
+        
+        .product-management-price {
+            color: var(--accent);
+            font-weight: 600;
+        }
+        
+        .product-management-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn-hide, .btn-show, .btn-delete {
+            padding: 5px 10px;
+            border-radius: 5px;
+            border: none;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-hide {
+            background: var(--warning);
+            color: white;
+        }
+        
+        .btn-show {
+            background: var(--success);
+            color: white;
+        }
+        
+        .btn-delete {
+            background: var(--danger);
+            color: white;
+        }
+        
+        /* Promociones */
+        .sale-info {
+            background: rgba(255, 109, 0, 0.1);
+            border-radius: 10px;
+            padding: 10px;
+            margin-top: 10px;
+            border-left: 4px solid var(--accent);
+        }
+        
+        .sale-info p {
+            font-size: 0.9rem;
+            color: #ff9e00;
+        }
+        
+        /* Compras del usuario */
+        .purchases-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .purchase-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-left: 4px solid var(--success);
+        }
+        
+        .purchase-item.refunded {
+            border-left-color: var(--danger);
+            opacity: 0.7;
+        }
+        
+        .purchase-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .purchase-date {
+            font-size: 0.8rem;
+            color: #aaa;
+        }
+        
+        .purchase-status {
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .status-delivered {
+            background: rgba(56, 176, 0, 0.2);
+            color: #90ff64;
+        }
+        
+        .status-pending {
+            background: rgba(255, 158, 0, 0.2);
+            color: #ff9e00;
+        }
+        
+        .status-refunded {
+            background: rgba(217, 4, 41, 0.2);
+            color: #ff6b8b;
+        }
+        
+        .btn-refund {
+            background: var(--danger);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .store-sidebar {
+                width: 100%;
+                margin-right: 0;
+                margin-bottom: 30px;
+                position: static;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .app-header {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px;
+            }
+            
+            .header-buttons {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .products-container {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+            
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+            
+            .secret-panel-tabs {
+                flex-direction: column;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .products-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .login-container {
+                padding: 30px 20px;
+            }
+            
+            .store-title {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Pantalla de Login -->
+    <div id="login-screen">
+        <div class="login-container">
+            <h1 class="store-title">Chas Store</h1>
+            <p class="store-subtitle">Tu tienda online de confianza</p>
+            
+            <div class="input-group">
+                <label for="username">Nombre de usuario</label>
+                <input type="text" id="username" placeholder="Ingresa tu usuario">
+            </div>
+            
+            <div class="input-group">
+                <label for="password">Contraseña</label>
+                <input type="password" id="password" placeholder="Ingresa tu contraseña">
+            </div>
+            
+            <button class="btn btn-primary" onclick="login()">Ingresar a la tienda</button>
+            
+            <div id="login-message" class="message hidden"></div>
+            
+            <div style="margin-top: 30px; color: #aaa; font-size: 0.9rem;">
+                <p>Usuario administrador: <strong>1235</strong></p>
+                <p>Contraseña administrador: <strong>12345</strong></p>
+                <p>Nuevas cuentas: Contraseña <strong>112233</strong></p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Pantalla principal de la tienda -->
+    <div id="app-screen" class="hidden">
+        <!-- Header -->
+        <header class="app-header">
+            <div>
+                <h1 class="app-title">Chas Store</h1>
+            </div>
+            
+            <div class="user-info">
+                <div class="balance-container">
+                    <span class="balance-label">Saldo:</span>
+                    <span class="balance-amount" id="user-balance">0</span>
+                    <i class="fas fa-coins chas-icon"></i>
+                </div>
+                
+                <div class="header-buttons">
+                    <button class="header-btn btn-inventory" onclick="openInventory()">
+                        <i class="fas fa-box"></i>
+                        <span>Inventario</span>
+                    </button>
+                    <button class="header-btn btn-purchases" onclick="openPurchases()">
+                        <i class="fas fa-receipt"></i>
+                        <span>Compras</span>
+                    </button>
+                    <button class="header-btn btn-redeem" onclick="openRedeem()">
+                        <i class="fas fa-gift"></i>
+                        <span>Canjear</span>
+                    </button>
+                    <button class="header-btn btn-cart" onclick="openCart()">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span>Carrito</span>
+                        <span class="cart-count" id="cart-count">0</span>
+                    </button>
+                    <button class="header-btn btn-settings" onclick="openSettings()">
+                        <i class="fas fa-cog"></i>
+                        <span>Configuración</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Contenido principal -->
+        <div class="main-content">
+            <!-- Sidebar con categorías y buscador -->
+            <div class="store-sidebar">
+                <h2 class="sidebar-title">Buscar productos</h2>
+                <div class="search-container">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" class="search-input" id="search-input" placeholder="Escribe para buscar...">
+                </div>
+                
+                <h2 class="sidebar-title">Categorías</h2>
+                <ul class="categories-list" id="categories-list">
+                    <!-- Las categorías se cargarán dinámicamente -->
+                </ul>
+                
+                <!-- Publicidad -->
+                <div class="ad-container" id="ad-container" onclick="openAdLink()">
+                    <div class="ad-label">PUBLICIDAD</div>
+                    <div class="ad-content" id="ad-content">
+                        <div class="ad-default">
+                            <i class="fas fa-ad"></i>
+                        </div>
+                        <img class="ad-image" id="ad-image" alt="Publicidad">
+                        <p class="ad-text" id="ad-text">Espacio publicitario</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Productos -->
+            <div class="store-products">
+                <div class="store-section">
+                    <h2 class="section-title" id="section-title">Todos los productos</h2>
+                    <div class="products-container" id="products-container">
+                        <!-- Los productos se cargarán dinámicamente -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal para agregar/editar producto (panel secreto) -->
+    <div id="add-product-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="product-modal-title">Agregar Nuevo Producto</h2>
+                <button class="close-modal" onclick="closeAddProductModal()">&times;</button>
+            </div>
+            
+            <div class="form-group">
+                <label for="product-name">Nombre del producto</label>
+                <input type="text" id="product-name" placeholder="Ej: Camiseta Premium">
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="product-price">Precio (en Chas)</label>
+                    <input type="number" id="product-price" placeholder="Ej: 100" min="0">
+                </div>
+                <div class="form-group">
+                    <label for="product-category">Categoría</label>
+                    <select id="product-category">
+                        <!-- Las categorías se cargarán dinámicamente -->
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="product-rarity">Rareza</label>
+                    <select id="product-rarity">
+                        <option value="common">Común</option>
+                        <option value="rare">Raro</option>
+                        <option value="legendary">Legendario</option>
+                        <option value="mythical">Mítico</option>
+                        <option value="exclusive">Exclusivo</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="product-rating">Calificación (1-5)</label>
+                    <input type="number" id="product-rating" min="1" max="5" placeholder="5" step="0.1">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>Imagen del producto</label>
+                <div class="image-options">
+                    <button class="image-option-btn active" type="button" onclick="setImageOption('emoji')">Emoji</button>
+                    <button class="image-option-btn" type="button" onclick="setImageOption('url')">URL de imagen</button>
+                </div>
+                
+                <div class="emoji-input-container active" id="emoji-input-container">
+                    <input type="text" id="product-emoji" placeholder="Ej: 👕" maxlength="5">
+                </div>
+                
+                <div class="url-input-container" id="url-input-container">
+                    <input type="text" id="product-image-url" placeholder="https://ejemplo.com/imagen.jpg">
+                </div>
+                
+                <div class="image-preview" id="image-preview">
+                    <div class="image-preview-emoji" id="preview-emoji">👕</div>
+                    <img class="image-preview-img" id="preview-image" alt="Vista previa">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="product-description">Descripción</label>
+                <textarea id="product-description" rows="3" placeholder="Describe el producto..."></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="product-colors">Colores (separados por comas)</label>
+                <input type="text" id="product-colors" placeholder="Ej: Rojo, Azul, Verde">
+            </div>
+            
+            <!-- Nuevos campos para productos limitados y promociones -->
+            <div class="form-row">
+                <div class="form-group">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="product-limited" onchange="toggleLimitedFields()">
+                        <label for="product-limited">Producto limitado (stock limitado)</label>
+                    </div>
+                    <input type="number" id="product-stock" placeholder="Cantidad en stock" min="1" disabled>
+                </div>
+                <div class="form-group">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="product-on-sale" onchange="toggleSaleFields()">
+                        <label for="product-on-sale">En promoción (oferta)</label>
+                    </div>
+                    <input type="number" id="product-sale-price" placeholder="Precio con descuento" min="0" disabled>
+                </div>
+            </div>
+            
+            <div class="checkbox-group">
+                <input type="checkbox" id="product-visible" checked>
+                <label for="product-visible">Mostrar en la tienda</label>
+            </div>
+            
+            <button class="btn-submit" id="product-submit-btn" onclick="saveProduct()">Agregar Producto</button>
+        </div>
+    </div>
+    
+    <!-- Modal para inventario -->
+    <div id="inventory-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Mi Inventario</h2>
+                <button class="close-modal" onclick="closeInventoryModal()">&times;</button>
+            </div>
+            
+            <div class="inventory-container" id="inventory-items">
+                <!-- Los elementos del inventario se cargarán dinámicamente -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal para compras del usuario -->
+    <div id="purchases-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Mis Compras</h2>
+                <button class="close-modal" onclick="closePurchasesModal()">&times;</button>
+            </div>
+            
+            <div class="purchases-list" id="purchases-list">
+                <!-- Las compras se cargarán dinámicamente -->
+                <p style="text-align: center; color: #aaa; padding: 30px;">No tienes compras realizadas</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal para configuración y panel secreto -->
+    <div id="settings-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Configuración</h2>
+                <button class="close-modal" onclick="closeSettingsModal()">&times;</button>
+            </div>
+            
+            <!-- Panel secreto (visible solo para admin) -->
+            <div id="secret-panel" class="hidden">
+                <div class="secret-panel-tabs">
+                    <button class="secret-tab active" onclick="switchSecretTab('stats')">Estadísticas</button>
+                    <button class="secret-tab" onclick="switchSecretTab('accounts')">Cuentas</button>
+                    <button class="secret-tab" onclick="switchSecretTab('products')">Productos</button>
+                    <button class="secret-tab" onclick="switchSecretTab('categories')">Categorías</button>
+                    <button class="secret-tab" onclick="switchSecretTab('ads')">Publicidad</button>
+                    <button class="secret-tab" onclick="switchSecretTab('chas-codes')">Códigos Chas</button>
+                    <button class="secret-tab" onclick="switchSecretTab('inventory-codes')">Códigos Inventario</button>
+                    <button class="secret-tab" onclick="switchSecretTab('sales')">Ventas</button>
+                </div>
+                
+                <!-- Estadísticas -->
+                <div id="tab-stats" class="secret-tab-content active">
+                    <div class="secret-section">
+                        <h3>Estadísticas de la Tienda</h3>
+                        <div class="sales-stats" id="sales-stats">
+                            <!-- Se cargarán dinámicamente -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Gestión de cuentas -->
+                <div id="tab-accounts" class="secret-tab-content">
+                    <div class="secret-section">
+                        <h3>Gestión de Cuentas</h3>
+                        <div class="accounts-list" id="accounts-list">
+                            <!-- Las cuentas se cargarán dinámicamente -->
+                        </div>
+                        <button class="btn-submit" onclick="refreshAccounts()">Actualizar Lista</button>
+                    </div>
+                </div>
+                
+                <!-- Gestión de productos -->
+                <div id="tab-products" class="secret-tab-content">
+                    <div class="secret-section">
+                        <h3>Gestión de Productos</h3>
+                        <button class="btn-submit" onclick="openAddProductModal()">Agregar Nuevo Producto</button>
+                        
+                        <div style="margin-top: 20px;">
+                            <h4>Lista de Productos</h4>
+                            <div class="products-management-list" id="products-management-list">
+                                <!-- Los productos se cargarán dinámicamente -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Gestión de categorías -->
+                <div id="tab-categories" class="secret-tab-content">
+                    <div class="secret-section">
+                        <h3>Gestión de Categorías</h3>
+                        <div class="form-group">
+                            <label for="new-category-name">Nueva Categoría</label>
+                            <input type="text" id="new-category-name" placeholder="Nombre de la categoría">
+                        </div>
+                        <div class="form-group">
+                            <label for="new-category-type">Destino de los productos</label>
+                            <select id="new-category-type">
+                                <option value="cart">Carrito de compras</option>
+                                <option value="inventory">Inventario (colección)</option>
+                            </select>
+                        </div>
+                        <button class="btn-submit" onclick="addNewCategory()">Agregar Categoría</button>
+                        
+                        <div style="margin-top: 20px;">
+                            <h4>Categorías existentes</h4>
+                            <ul id="existing-categories">
+                                <!-- Las categorías se cargarán dinámicamente -->
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Gestión de publicidad -->
+                <div id="tab-ads" class="secret-tab-content">
+                    <div class="secret-section">
+                        <h3>Gestión de Publicidad</h3>
+                        <div class="form-group">
+                            <label for="ad-image-url">URL de la imagen de publicidad</label>
+                            <input type="text" id="ad-image-url" placeholder="https://ejemplo.com/anuncio.jpg">
+                        </div>
+                        <div class="form-group">
+                            <label for="ad-text-input">Texto de la publicidad</label>
+                            <input type="text" id="ad-text-input" placeholder="¡Oferta especial!">
+                        </div>
+                        <div class="form-group">
+                            <label for="ad-link">Enlace de la publicidad</label>
+                            <input type="text" id="ad-link" placeholder="https://ejemplo.com">
+                        </div>
+                        <button class="btn-submit" onclick="saveAd()">Guardar Publicidad</button>
+                    </div>
+                </div>
+                
+                <!-- Gestión de códigos Chas -->
+                <div id="tab-chas-codes" class="secret-tab-content">
+                    <div class="secret-section">
+                        <h3>Generador de Códigos Chas</h3>
+                        <div class="form-group">
+                            <label for="code-amount">Cantidad de Chas</label>
+                            <input type="number" id="code-amount" placeholder="Ej: 500" min="1">
+                        </div>
+                        <div class="form-group">
+                            <label for="code-uses">Usos máximos</label>
+                            <input type="number" id="code-uses" placeholder="Ej: 10 (0 = ilimitado)" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="code-expiry">Días de validez (0 = sin expiración)</label>
+                            <input type="number" id="code-expiry" placeholder="Ej: 30" min="0">
+                        </div>
+                        <button class="btn-submit" onclick="generateChasCode()">Generar Código Chas</button>
+                        
+                        <div style="margin-top: 20px;">
+                            <h4>Códigos Chas generados</h4>
+                            <div id="generated-chas-codes">
+                                <!-- Los códigos se mostrarán aquí -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Gestión de códigos de inventario -->
+                <div id="tab-inventory-codes" class="secret-tab-content">
+                    <div class="secret-section">
+                        <h3>Generador de Códigos de Inventario</h3>
+                        <p style="color: #aaa; margin-bottom: 15px;">Estos códigos no otorgan Chas, solo son para colección</p>
+                        <div class="form-group">
+                            <label for="inventory-code-length">Longitud del código (8-12 caracteres)</label>
+                            <input type="number" id="inventory-code-length" min="8" max="12" value="8">
+                        </div>
+                        <div class="form-group">
+                            <label for="inventory-code-amount">Cantidad de códigos a generar</label>
+                            <input type="number" id="inventory-code-amount" min="1" max="100" value="1">
+                        </div>
+                        <button class="btn-submit" onclick="generateInventoryCode()">Generar Códigos Inventario</button>
+                        
+                        <div style="margin-top: 20px;">
+                            <h4>Códigos de inventario generados</h4>
+                            <div id="generated-inventory-codes">
+                                <!-- Los códigos se mostrarán aquí -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Registro de ventas -->
+                <div id="tab-sales" class="secret-tab-content">
+                    <div class="secret-section">
+                        <h3>Registro de Ventas y Devoluciones</h3>
+                        <div id="sales-list">
+                            <!-- Las ventas se cargarán dinámicamente -->
+                        </div>
+                        <button class="btn-submit" onclick="refreshSales()">Actualizar Ventas</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="margin-top: 30px; text-align: center;">
+                <button class="btn-submit" style="background: linear-gradient(45deg, #6c757d, #495057);" onclick="logout()">Cerrar Sesión</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal para carrito -->
+    <div id="cart-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Mi Carrito de Compras</h2>
+                <button class="close-modal" onclick="closeCartModal()">&times;</button>
+            </div>
+            
+            <div id="cart-items">
+                <!-- Los elementos del carrito se cargarán dinámicamente -->
+                <p style="text-align: center; color: #aaa; padding: 30px;">Tu carrito está vacío</p>
+            </div>
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
+                <div>
+                    <h3>Total: <span id="cart-total">0</span> Chas</h3>
+                </div>
+                <button class="btn-submit" style="width: auto;" onclick="checkout()">Finalizar Compra</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal para canjear códigos -->
+    <div id="redeem-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Canjear Código</h2>
+                <button class="close-modal" onclick="closeRedeemModal()">&times;</button>
+            </div>
+            
+            <div class="form-group">
+                <label for="redeem-code">Ingresa tu código de canje</label>
+                <input type="text" id="redeem-code" placeholder="Ej: CHAS500">
+            </div>
+            
+            <button class="btn-submit" onclick="redeemCode()">Canjear Código</button>
+            
+            <div id="redeem-message" class="message hidden" style="margin-top: 20px;"></div>
+        </div>
+    </div>
+    
+    <!-- Modal para ver compras de una cuenta (admin) -->
+    <div id="user-purchases-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="user-purchases-title">Compras del Usuario</h2>
+                <button class="close-modal" onclick="closeUserPurchasesModal()">&times;</button>
+            </div>
+            
+            <div class="purchases-list" id="user-purchases-list">
+                <!-- Las compras del usuario se cargarán dinámicamente -->
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Variables globales
+        let currentUser = null;
+        let users = JSON.parse(localStorage.getItem('chasUsers')) || [];
+        let products = JSON.parse(localStorage.getItem('chasProducts')) || [];
+        let categories = JSON.parse(localStorage.getItem('chasCategories')) || ['Ropa', 'Electrónica', 'Hogar', 'Juguetes', 'Otros'];
+        let categoryTypes = JSON.parse(localStorage.getItem('chasCategoryTypes')) || {
+            'Ropa': 'cart',
+            'Electrónica': 'cart', 
+            'Hogar': 'cart',
+            'Juguetes': 'inventory',
+            'Otros': 'cart'
+        };
+        let userInventory = JSON.parse(localStorage.getItem('chasInventory')) || {};
+        let userCart = JSON.parse(localStorage.getItem('chasCart')) || {};
+        let userPurchases = JSON.parse(localStorage.getItem('chasPurchases')) || {};
+        let adData = JSON.parse(localStorage.getItem('chasAdData')) || { 
+            imageUrl: '', 
+            text: 'Espacio publicitario', 
+            link: '' 
+        };
+        let salesHistory = JSON.parse(localStorage.getItem('chasSalesHistory')) || [];
+        let chasCodes = JSON.parse(localStorage.getItem('chasCodes')) || [];
+        let inventoryCodes = JSON.parse(localStorage.getItem('chasInventoryCodes')) || [];
+        let currentProductId = null;
+        let isEditingProduct = false;
+        
+        // Usuario administrador fijo
+        const ADMIN_USERNAME = '1235';
+        const ADMIN_PASSWORD = '12345';
+        const DEFAULT_PASSWORD = '112233'; // Contraseña por defecto para nuevas cuentas
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            // Verificar si hay usuario en localStorage
+            const savedUser = localStorage.getItem('chasCurrentUser');
+            if (savedUser) {
+                currentUser = savedUser;
+                showAppScreen();
+            }
+            
+            // Cargar publicidad
+            loadAd();
+            
+            // Cargar categorías en el sidebar
+            loadCategories();
+            
+            // Cargar productos
+            loadProducts();
+            
+            // Configurar eventos
+            document.getElementById('search-input').addEventListener('input', filterProducts);
+            document.getElementById('product-emoji').addEventListener('input', updateImagePreview);
+            document.getElementById('product-image-url').addEventListener('input', updateImagePreview);
+            
+            // Inicializar usuario admin si no existe
+            initializeAdmin();
+        });
+        
+        function initializeAdmin() {
+            // Verificar si el admin existe
+            let adminUser = users.find(u => u.username === ADMIN_USERNAME);
+            
+            if (!adminUser) {
+                // Crear usuario admin
+                adminUser = {
+                    username: ADMIN_USERNAME,
+                    password: ADMIN_PASSWORD,
+                    balance: 0,
+                    isAdmin: true,
+                    isBlocked: false,
+                    purchases: [],
+                    totalSpent: 0
+                };
+                users.push(adminUser);
+                localStorage.setItem('chasUsers', JSON.stringify(users));
+            }
+            
+            // Inicializar códigos de ejemplo si no existen
+            if (chasCodes.length === 0) {
+                chasCodes.push({
+                    code: 'CHAS500',
+                    amount: 500,
+                    maxUses: 10,
+                    uses: 0,
+                    expiryDate: null,
+                    createdAt: new Date().toISOString()
+                });
+                localStorage.setItem('chasCodes', JSON.stringify(chasCodes));
+            }
+        }
+        
+        // Funciones de login
+        function login() {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const messageDiv = document.getElementById('login-message');
+            
+            if (!username || !password) {
+                showMessage(messageDiv, 'Por favor, ingresa usuario y contraseña', 'error');
+                return;
+            }
+            
+            // Verificar si el usuario existe
+            let user = users.find(u => u.username === username);
+            
+            if (user) {
+                // Usuario existe, verificar contraseña
+                if (user.password !== password) {
+                    showMessage(messageDiv, 'Contraseña incorrecta', 'error');
+                    return;
+                }
+            } else {
+                // Crear nuevo usuario con contraseña por defecto
+                if (password === DEFAULT_PASSWORD) {
+                    user = {
+                        username,
+                        password: DEFAULT_PASSWORD,
+                        balance: 0, // Nuevas cuentas empiezan con 0
+                        isAdmin: false,
+                        isBlocked: false,
+                        purchases: [],
+                        totalSpent: 0
+                    };
+                    users.push(user);
+                    localStorage.setItem('chasUsers', JSON.stringify(users));
+                } else {
+                    showMessage(messageDiv, 'Usuario no encontrado. Usa la contraseña por defecto: ' + DEFAULT_PASSWORD + ' para crear una cuenta nueva.', 'error');
+                    return;
+                }
+            }
+            
+            if (user.isBlocked) {
+                showMessage(messageDiv, 'Esta cuenta está bloqueada. Contacta al administrador.', 'error');
+                return;
+            }
+            
+            currentUser = username;
+            localStorage.setItem('chasCurrentUser', username);
+            
+            // Inicializar inventario, carrito y compras si no existen
+            if (!userInventory[username]) {
+                userInventory[username] = [];
+                localStorage.setItem('chasInventory', JSON.stringify(userInventory));
+            }
+            
+            if (!userCart[username]) {
+                userCart[username] = [];
+                localStorage.setItem('chasCart', JSON.stringify(userCart));
+            }
+            
+            if (!userPurchases[username]) {
+                userPurchases[username] = [];
+                localStorage.setItem('chasPurchases', JSON.stringify(userPurchases));
+            }
+            
+            showAppScreen();
+        }
+        
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('chasCurrentUser');
+            showLoginScreen();
+        }
+        
+        // Navegación entre pantallas
+        function showLoginScreen() {
+            document.getElementById('login-screen').classList.remove('hidden');
+            document.getElementById('app-screen').classList.add('hidden');
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+        }
+        
+        function showAppScreen() {
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('app-screen').classList.remove('hidden');
+            
+            // Actualizar información del usuario
+            const user = users.find(u => u.username === currentUser);
+            if (user) {
+                document.getElementById('user-balance').textContent = user.balance;
+                updateCartCount();
+                
+                // Mostrar panel secreto si es admin
+                if (user.isAdmin) {
+                    document.getElementById('secret-panel').classList.remove('hidden');
+                    loadStats();
+                    loadAccounts();
+                    loadProductsManagement();
+                    loadGeneratedChasCodes();
+                    loadGeneratedInventoryCodes();
+                    loadSalesHistory();
+                }
+            }
+            
+            // Cargar productos
+            loadProducts();
+        }
+        
+        // Funciones para productos
+        function loadProducts(filterCategory = 'all') {
+            const container = document.getElementById('products-container');
+            const sectionTitle = document.getElementById('section-title');
+            
+            if (filterCategory === 'all') {
+                sectionTitle.textContent = 'Todos los productos';
+            } else {
+                sectionTitle.textContent = `Productos: ${filterCategory}`;
+            }
+            
+            container.innerHTML = '';
+            
+            // Filtrar productos por categoría y visibilidad
+            let filteredProducts = products.filter(p => p.visible !== false);
+            if (filterCategory !== 'all') {
+                filteredProducts = filteredProducts.filter(p => p.category === filterCategory);
+            }
+            
+            if (filteredProducts.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #aaa; grid-column: 1 / -1; padding: 40px;">No hay productos en esta categoría</p>';
+                return;
+            }
+            
+            filteredProducts.forEach(product => {
+                const user = users.find(u => u.username === currentUser);
+                const inInventory = userInventory[currentUser]?.some(item => item.id === product.id);
+                const inCart = userCart[currentUser]?.some(item => item.id === product.id);
+                const isOutOfStock = product.limited && product.stock <= 0;
+                
+                const productCard = document.createElement('div');
+                productCard.className = `product-card ${inInventory ? 'purchased' : ''} ${product.onSale ? 'sale' : ''} ${product.visible === false ? 'hidden-product' : ''}`;
+                
+                let badgesHTML = '';
+                if (product.onSale) badgesHTML += '<div class="product-badge sale-badge">¡OFERTA!</div>';
+                if (product.limited) badgesHTML += '<div class="product-badge limited-badge">LIMITADO</div>';
+                if (product.visible === false) badgesHTML += '<div class="product-badge hidden-badge">OCULTO</div>';
+                
+                productCard.innerHTML = `
+                    <div class="product-badges">
+                        ${badgesHTML}
+                    </div>
+                    <div class="product-image-container">
+                        ${product.imageType === 'url' && product.imageUrl ? 
+                            `<img src="${product.imageUrl}" class="product-image-url" alt="${product.name}" onerror="this.onerror=null; this.style.display='none'; this.parentElement.innerHTML='<div class=\\'product-image-emoji\\'>📦</div>';">` : 
+                            `<div class="product-image-emoji">${product.emoji || '📦'}</div>`
+                        }
+                    </div>
+                    <div class="product-info">
+                        <div class="product-header">
+                            <h3 class="product-name">${product.name}</h3>
+                            <div class="product-price">
+                                ${product.onSale ? `<span class="product-original-price">${product.price} Chas</span>` : ''}
+                                <span class="product-current-price">
+                                    <i class="fas fa-coins"></i>
+                                    ${product.onSale ? product.salePrice : product.price}
+                                </span>
+                            </div>
+                        </div>
+                        <span class="product-category">${product.category}</span>
+                        ${product.colors ? `
+                            <div class="product-colors">
+                                ${product.colors.split(',').map(color => `
+                                    <div class="color-circle" style="background-color: ${color.trim()};"></div>
+                                `).join('')}
+                            </div>
+                        ` : ''}
+                        <div class="product-rarity">
+                            <i class="fas fa-gem"></i>
+                            <span class="rarity-${product.rarity}">${getRarityText(product.rarity)}</span>
+                        </div>
+                        ${product.limited ? `
+                            <div class="product-stock ${product.stock <= 3 ? 'stock-low' : ''}">
+                                <i class="fas fa-box"></i> ${product.stock} unidades disponibles
+                            </div>
+                        ` : ''}
+                        <div class="product-rating">
+                            ${getRatingStars(product.rating)}
+                        </div>
+                        ${product.description ? `<p style="font-size: 0.9rem; color: #ccc; margin-bottom: 15px;">${product.description}</p>` : ''}
+                        <div class="product-actions">
+                            <button class="btn-buy" onclick="buyProduct('${product.id}')" 
+                                ${inInventory || isOutOfStock || (user && user.balance < (product.onSale ? product.salePrice : product.price)) ? 'disabled' : ''}>
+                                ${inInventory ? 'COMPRADO' : 'COMPRAR'}
+                            </button>
+                            ${currentUser === ADMIN_USERNAME ? `
+                                <button class="btn-edit" onclick="editProduct('${product.id}')">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+                container.appendChild(productCard);
+            });
+        }
+        
+        function filterProducts() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const productCards = document.querySelectorAll('.product-card');
+            
+            productCards.forEach(card => {
+                const productName = card.querySelector('.product-name').textContent.toLowerCase();
+                const productCategory = card.querySelector('.product-category').textContent.toLowerCase();
+                
+                if (productName.includes(searchTerm) || productCategory.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+        
+        function buyProduct(productId) {
+            const product = products.find(p => p.id === productId);
+            const user = users.find(u => u.username === currentUser);
+            
+            if (!product || !user) return;
+            
+            const price = product.onSale ? product.salePrice : product.price;
+            
+            if (user.balance < price) {
+                alert('Saldo insuficiente para comprar este producto');
+                return;
+            }
+            
+            // Verificar stock si es limitado
+            if (product.limited && product.stock <= 0) {
+                alert('Este producto está agotado');
+                return;
+            }
+            
+            // Restar saldo
+            user.balance -= price;
+            user.totalSpent = (user.totalSpent || 0) + price;
+            
+            // Restar stock si es limitado
+            if (product.limited) {
+                product.stock -= 1;
+            }
+            
+            // Determinar destino según categoría
+            const category = product.category;
+            const destination = categoryTypes[category] || 'cart';
+            
+            // Registrar la venta
+            const saleRecord = {
+                id: 'sale_' + Date.now() + Math.random().toString(36).substr(2, 9),
+                productId: product.id,
+                productName: product.name,
+                price: price,
+                username: currentUser,
+                date: new Date().toISOString(),
+                type: destination,
+                status: 'completed'
+            };
+            
+            salesHistory.push(saleRecord);
+            
+            if (destination === 'cart') {
+                // Agregar al carrito
+                if (!userCart[currentUser]) userCart[currentUser] = [];
+                userCart[currentUser].push({
+                    ...product,
+                    purchaseDate: new Date().toISOString(),
+                    saleId: saleRecord.id
+                });
+                localStorage.setItem('chasCart', JSON.stringify(userCart));
+                updateCartCount();
+                alert('Producto agregado al carrito');
+            } else {
+                // Agregar al inventario con código de colección
+                if (!userInventory[currentUser]) userInventory[currentUser] = [];
+                
+                // Generar código de colección de 8 dígitos
+                const collectionCode = generateCollectionCode(8);
+                
+                userInventory[currentUser].push({
+                    ...product,
+                    purchaseDate: new Date().toISOString(),
+                    collectionCode: collectionCode,
+                    saleId: saleRecord.id,
+                    used: false
+                });
+                localStorage.setItem('chasInventory', JSON.stringify(userInventory));
+                alert(`Producto agregado a tu inventario. Código de colección: ${collectionCode}`);
+                
+                // Registrar en compras del usuario
+                if (!userPurchases[currentUser]) userPurchases[currentUser] = [];
+                userPurchases[currentUser].push({
+                    ...saleRecord,
+                    product: product.name,
+                    collectionCode: collectionCode,
+                    deliveryDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString() // 7 días después
+                });
+                localStorage.setItem('chasPurchases', JSON.stringify(userPurchases));
+            }
+            
+            // Actualizar datos
+            localStorage.setItem('chasUsers', JSON.stringify(users));
+            localStorage.setItem('chasProducts', JSON.stringify(products));
+            localStorage.setItem('chasSalesHistory', JSON.stringify(salesHistory));
+            
+            // Actualizar UI
+            document.getElementById('user-balance').textContent = user.balance;
+            loadProducts();
+            
+            // Actualizar estadísticas si es admin
+            if (currentUser === ADMIN_USERNAME) {
+                loadStats();
+            }
+        }
+        
+        function generateCollectionCode(length = 8) {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let code = '';
+            for (let i = 0; i < length; i++) {
+                code += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return code;
+        }
+        
+        // Funciones para categorías
+        function loadCategories() {
+            const categoriesList = document.getElementById('categories-list');
+            const productCategorySelect = document.getElementById('product-category');
+            
+            // Limpiar listas
+            categoriesList.innerHTML = '';
+            productCategorySelect.innerHTML = '';
+            
+            // Agregar "Todas" como primera opción
+            const allItem = document.createElement('li');
+            allItem.className = 'category-item active';
+            allItem.innerHTML = `
+                <span>Todas las categorías</span>
+                <span class="category-count">${products.filter(p => p.visible !== false).length}</span>
+            `;
+            allItem.onclick = () => {
+                document.querySelectorAll('.category-item').forEach(item => item.classList.remove('active'));
+                allItem.classList.add('active');
+                loadProducts('all');
+            };
+            categoriesList.appendChild(allItem);
+            
+            // Agregar categorías existentes
+            categories.forEach(category => {
+                const categoryProducts = products.filter(p => p.category === category && p.visible !== false);
+                const categoryType = categoryTypes[category] || 'cart';
+                const typeText = categoryType === 'cart' ? 'Carrito' : 'Inventario';
+                const typeClass = categoryType === 'cart' ? 'type-cart' : 'type-inventory';
+                
+                // Para el sidebar
+                const categoryItem = document.createElement('li');
+                categoryItem.className = 'category-item';
+                categoryItem.innerHTML = `
+                    <div>
+                        <span>${category}</span>
+                        <span class="category-type ${typeClass}">${typeText}</span>
+                    </div>
+                    <span class="category-count">${categoryProducts.length}</span>
+                `;
+                categoryItem.onclick = () => {
+                    document.querySelectorAll('.category-item').forEach(item => item.classList.remove('active'));
+                    categoryItem.classList.add('active');
+                    loadProducts(category);
+                };
+                categoriesList.appendChild(categoryItem);
+                
+                // Para el select en el modal
+                const option = document.createElement('option');
+                option.value = category;
+                option.textContent = category;
+                productCategorySelect.appendChild(option);
+            });
+            
+            // Cargar categorías existentes en el panel secreto
+            loadExistingCategories();
+        }
+        
+        function loadExistingCategories() {
+            const existingCategoriesList = document.getElementById('existing-categories');
+            if (!existingCategoriesList) return;
+            
+            existingCategoriesList.innerHTML = '';
+            
+            categories.forEach(category => {
+                const categoryType = categoryTypes[category] || 'cart';
+                const typeText = categoryType === 'cart' ? 'Carrito' : 'Inventario';
+                const typeColor = categoryType === 'cart' ? '#2ec4b6' : '#4361ee';
+                
+                const li = document.createElement('li');
+                li.style.marginBottom = '10px';
+                li.style.padding = '8px';
+                li.style.background = 'rgba(255,255,255,0.05)';
+                li.style.borderRadius = '8px';
+                li.innerHTML = `
+                    <strong>${category}</strong> 
+                    <span style="color: ${typeColor}; font-size: 0.9rem; margin-left: 10px;">
+                        (${typeText})
+                    </span>
+                    <button onclick="deleteCategory('${category}')" style="margin-left: 10px; padding: 3px 8px; background: var(--danger); color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 0.8rem;">
+                        Eliminar
+                    </button>
+                `;
+                existingCategoriesList.appendChild(li);
+            });
+        }
+        
+        function addNewCategory() {
+            const categoryName = document.getElementById('new-category-name').value.trim();
+            const categoryType = document.getElementById('new-category-type').value;
+            
+            if (!categoryName) {
+                alert('Por favor, ingresa un nombre para la categoría');
+                return;
+            }
+            
+            if (categories.includes(categoryName)) {
+                alert('Esta categoría ya existe');
+                return;
+            }
+            
+            categories.push(categoryName);
+            categoryTypes[categoryName] = categoryType;
+            
+            localStorage.setItem('chasCategories', JSON.stringify(categories));
+            localStorage.setItem('chasCategoryTypes', JSON.stringify(categoryTypes));
+            
+            document.getElementById('new-category-name').value = '';
+            
+            loadCategories();
+            alert('Categoría agregada correctamente');
+        }
+        
+        function deleteCategory(categoryName) {
+            if (!confirm(`¿Estás seguro de que quieres eliminar la categoría "${categoryName}"?`)) {
+                return;
+            }
+            
+            // Eliminar categoría
+            categories = categories.filter(c => c !== categoryName);
+            delete categoryTypes[categoryName];
+            
+            // Reasignar productos de esta categoría a "Otros"
+            products.forEach(product => {
+                if (product.category === categoryName) {
+                    product.category = 'Otros';
+                }
+            });
+            
+            localStorage.setItem('chasCategories', JSON.stringify(categories));
+            localStorage.setItem('chasCategoryTypes', JSON.stringify(categoryTypes));
+            localStorage.setItem('chasProducts', JSON.stringify(products));
+            
+            loadCategories();
+            loadProducts();
+            alert('Categoría eliminada correctamente');
+        }
+        
+        // Funciones para el panel secreto
+        function switchSecretTab(tabName) {
+            // Ocultar todas las pestañas
+            document.querySelectorAll('.secret-tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.secret-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Mostrar la pestaña seleccionada
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+            document.querySelector(`.secret-tab[onclick="switchSecretTab('${tabName}')"]`).classList.add('active');
+        }
+        
+        function loadStats() {
+            const statsContainer = document.getElementById('sales-stats');
+            if (!statsContainer) return;
+            
+            // Calcular estadísticas
+            const totalSales = salesHistory.filter(s => s.status === 'completed').length;
+            const totalRefunds = salesHistory.filter(s => s.status === 'refunded').length;
+            const totalRevenue = salesHistory
+                .filter(s => s.status === 'completed')
+                .reduce((sum, sale) => sum + sale.price, 0);
+            const totalUsers = users.length;
+            
+            statsContainer.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-value stat-sales">${totalSales}</div>
+                    <div class="stat-label">Ventas Totales</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value stat-refunds">${totalRefunds}</div>
+                    <div class="stat-label">Devoluciones</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value stat-total">${totalRevenue}</div>
+                    <div class="stat-label">Chas Recaudados</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value stat-users">${totalUsers}</div>
+                    <div class="stat-label">Usuarios</div>
+                </div>
+            `;
+        }
+        
+        function loadAccounts() {
+            const accountsList = document.getElementById('accounts-list');
+            if (!accountsList) return;
+            
+            accountsList.innerHTML = '';
+            
+            users.forEach(user => {
+                // Ocultar contraseña (mostrar asteriscos)
+                const hiddenPassword = '•'.repeat(user.password.length);
+                
+                const accountItem = document.createElement('div');
+                accountItem.className = 'account-item';
+                accountItem.innerHTML = `
+                    <div class="account-info">
+                        <div class="account-username">${user.username} ${user.isAdmin ? '(Admin)' : ''}</div>
+                        <div class="account-password">${hiddenPassword}</div>
+                        <div class="account-stats">
+                            Saldo: <span class="account-balance">${user.balance} Chas</span> | 
+                            Compras: ${userPurchases[user.username] ? userPurchases[user.username].length : 0} | 
+                            Total gastado: ${user.totalSpent || 0} Chas
+                        </div>
+                        <div class="account-status ${user.isBlocked ? 'status-blocked' : 'status-active'}">
+                            ${user.isBlocked ? 'BLOQUEADA' : 'ACTIVA'}
+                        </div>
+                    </div>
+                    <div class="account-actions">
+                        ${user.isBlocked ? 
+                            `<button class="btn-unblock" onclick="toggleAccountBlock('${user.username}', false)">Desbloquear</button>` : 
+                            `<button class="btn-block" onclick="toggleAccountBlock('${user.username}', true)">Bloquear</button>`
+                        }
+                        <button class="btn-view-purchases" onclick="viewUserPurchases('${user.username}')">Ver Compras</button>
+                    </div>
+                `;
+                accountsList.appendChild(accountItem);
+            });
+        }
+        
+        function toggleAccountBlock(username, block) {
+            const user = users.find(u => u.username === username);
+            if (!user) return;
+            
+            user.isBlocked = block;
+            localStorage.setItem('chasUsers', JSON.stringify(users));
+            loadAccounts();
+            
+            if (block) {
+                alert(`Cuenta ${username} bloqueada`);
+            } else {
+                alert(`Cuenta ${username} desbloqueada`);
+            }
+        }
+        
+        function refreshAccounts() {
+            loadAccounts();
+            alert('Lista de cuentas actualizada');
+        }
+        
+        function viewUserPurchases(username) {
+            const user = users.find(u => u.username === username);
+            if (!user) return;
+            
+            const purchases = userPurchases[username] || [];
+            const container = document.getElementById('user-purchases-list');
+            const title = document.getElementById('user-purchases-title');
+            
+            title.textContent = `Compras de ${username}`;
+            container.innerHTML = '';
+            
+            if (purchases.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #aaa; padding: 30px;">Este usuario no tiene compras</p>';
+            } else {
+                purchases.forEach(purchase => {
+                    const purchaseItem = document.createElement('div');
+                    purchaseItem.className = `purchase-item ${purchase.status === 'refunded' ? 'refunded' : ''}`;
+                    purchaseItem.innerHTML = `
+                        <div class="purchase-header">
+                            <div>
+                                <strong>${purchase.product || purchase.productName}</strong>
+                                <div style="font-size: 0.9rem; color: #aaa;">${new Date(purchase.date).toLocaleDateString()}</div>
+                            </div>
+                            <div class="purchase-status status-${purchase.status}">
+                                ${purchase.status === 'completed' ? 'COMPLETADA' : 
+                                  purchase.status === 'refunded' ? 'DEVUELTA' : 'PENDIENTE'}
+                            </div>
+                        </div>
+                        <div style="margin-top: 10px;">
+                            <div>Precio: <strong>${purchase.price} Chas</strong></div>
+                            ${purchase.collectionCode ? `<div>Código de colección: <code>${purchase.collectionCode}</code></div>` : ''}
+                            ${purchase.deliveryDate ? `<div>Fecha de llegada estimada: ${new Date(purchase.deliveryDate).toLocaleDateString()}</div>` : ''}
+                        </div>
+                    `;
+                    container.appendChild(purchaseItem);
+                });
+            }
+            
+            document.getElementById('user-purchases-modal').classList.remove('hidden');
+        }
+        
+        // Gestión de productos en panel secreto
+        function loadProductsManagement() {
+            const container = document.getElementById('products-management-list');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            products.forEach(product => {
+                const productItem = document.createElement('div');
+                productItem.className = 'product-management-item';
+                
+                productItem.innerHTML = `
+                    <div class="product-management-info">
+                        <div class="product-management-name">${product.name}</div>
+                        <div class="product-management-category">${product.category} | ${product.visible !== false ? 'Visible' : 'Oculto'}</div>
+                        <div class="product-management-price">${product.onSale ? product.salePrice : product.price} Chas</div>
+                    </div>
+                    <div class="product-management-actions">
+                        ${product.visible !== false ? 
+                            `<button class="btn-hide" onclick="toggleProductVisibility('${product.id}', false)">Ocultar</button>` : 
+                            `<button class="btn-show" onclick="toggleProductVisibility('${product.id}', true)">Mostrar</button>`
+                        }
+                        <button class="btn-edit" onclick="editProduct('${product.id}')">Editar</button>
+                        <button class="btn-delete" onclick="deleteProduct('${product.id}')">Eliminar</button>
+                    </div>
+                `;
+                container.appendChild(productItem);
+            });
+        }
+        
+        function toggleProductVisibility(productId, visible) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+            
+            product.visible = visible;
+            localStorage.setItem('chasProducts', JSON.stringify(products));
+            loadProductsManagement();
+            loadProducts();
+            
+            alert(`Producto ${visible ? 'mostrado' : 'ocultado'} correctamente`);
+        }
+        
+        function deleteProduct(productId) {
+            if (!confirm('¿Estás seguro de que quieres eliminar este producto?')) {
+                return;
+            }
+            
+            products = products.filter(p => p.id !== productId);
+            localStorage.setItem('chasProducts', JSON.stringify(products));
+            loadProductsManagement();
+            loadProducts();
+            loadCategories();
+            
+            alert('Producto eliminado correctamente');
+        }
+        
+        // Funciones para publicidad
+        function loadAd() {
+            const adImage = document.getElementById('ad-image');
+            const adText = document.getElementById('ad-text');
+            const adContainer = document.getElementById('ad-container');
+            
+            if (adData.imageUrl) {
+                adImage.src = adData.imageUrl;
+                adImage.style.display = 'block';
+                document.querySelector('.ad-default').style.display = 'none';
+            } else {
+                adImage.style.display = 'none';
+                document.querySelector('.ad-default').style.display = 'block';
+            }
+            
+            adText.textContent = adData.text || 'Espacio publicitario';
+            
+            // Configurar enlace si existe
+            if (adData.link) {
+                adContainer.style.cursor = 'pointer';
+                adContainer.title = 'Haz clic para visitar el enlace';
+            } else {
+                adContainer.style.cursor = 'default';
+                adContainer.title = '';
+            }
+        }
+        
+        function openAdLink() {
+            if (adData.link && adData.link.startsWith('http')) {
+                window.open(adData.link, '_blank');
+            }
+        }
+        
+        function saveAd() {
+            const imageUrl = document.getElementById('ad-image-url').value.trim();
+            const text = document.getElementById('ad-text-input').value.trim();
+            const link = document.getElementById('ad-link').value.trim();
+            
+            adData = { imageUrl, text, link };
+            localStorage.setItem('chasAdData', JSON.stringify(adData));
+            
+            loadAd();
+            alert('Publicidad guardada correctamente');
+            
+            // Limpiar campos
+            document.getElementById('ad-image-url').value = '';
+            document.getElementById('ad-text-input').value = '';
+            document.getElementById('ad-link').value = '';
+        }
+        
+        // Funciones para productos (panel secreto)
+        function openAddProductModal() {
+            isEditingProduct = false;
+            currentProductId = null;
+            document.getElementById('product-modal-title').textContent = 'Agregar Nuevo Producto';
+            document.getElementById('product-submit-btn').textContent = 'Agregar Producto';
+            
+            // Limpiar formulario
+            document.getElementById('product-name').value = '';
+            document.getElementById('product-price').value = '';
+            document.getElementById('product-category').value = categories[0] || 'Otros';
+            document.getElementById('product-rarity').value = 'common';
+            document.getElementById('product-rating').value = '5';
+            document.getElementById('product-emoji').value = '📦';
+            document.getElementById('product-image-url').value = '';
+            document.getElementById('product-description').value = '';
+            document.getElementById('product-colors').value = '';
+            document.getElementById('product-limited').checked = false;
+            document.getElementById('product-stock').value = '';
+            document.getElementById('product-stock').disabled = true;
+            document.getElementById('product-on-sale').checked = false;
+            document.getElementById('product-sale-price').value = '';
+            document.getElementById('product-sale-price').disabled = true;
+            document.getElementById('product-visible').checked = true;
+            
+            setImageOption('emoji');
+            updateImagePreview();
+            
+            document.getElementById('add-product-modal').classList.remove('hidden');
+        }
+        
+        function editProduct(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+            
+            isEditingProduct = true;
+            currentProductId = productId;
+            document.getElementById('product-modal-title').textContent = 'Editar Producto';
+            document.getElementById('product-submit-btn').textContent = 'Guardar Cambios';
+            
+            // Rellenar formulario con datos del producto
+            document.getElementById('product-name').value = product.name;
+            document.getElementById('product-price').value = product.price;
+            document.getElementById('product-category').value = product.category;
+            document.getElementById('product-rarity').value = product.rarity;
+            document.getElementById('product-rating').value = product.rating || 5;
+            
+            if (product.imageType === 'url' && product.imageUrl) {
+                setImageOption('url');
+                document.getElementById('product-image-url').value = product.imageUrl;
+            } else {
+                setImageOption('emoji');
+                document.getElementById('product-emoji').value = product.emoji || '📦';
+            }
+            
+            document.getElementById('product-description').value = product.description || '';
+            document.getElementById('product-colors').value = product.colors || '';
+            
+            // Campos de producto limitado
+            document.getElementById('product-limited').checked = product.limited || false;
+            document.getElementById('product-stock').value = product.stock || '';
+            document.getElementById('product-stock').disabled = !product.limited;
+            
+            // Campos de promoción
+            document.getElementById('product-on-sale').checked = product.onSale || false;
+            document.getElementById('product-sale-price').value = product.salePrice || '';
+            document.getElementById('product-sale-price').disabled = !product.onSale;
+            
+            // Campo de visibilidad
+            document.getElementById('product-visible').checked = product.visible !== false;
+            
+            updateImagePreview();
+            document.getElementById('add-product-modal').classList.remove('hidden');
+        }
+        
+        function saveProduct() {
+            const name = document.getElementById('product-name').value.trim();
+            const price = parseFloat(document.getElementById('product-price').value);
+            const category = document.getElementById('product-category').value;
+            const rarity = document.getElementById('product-rarity').value;
+            const rating = parseFloat(document.getElementById('product-rating').value) || 5;
+            const imageType = document.querySelector('.image-option-btn.active').getAttribute('data-type');
+            const emoji = document.getElementById('product-emoji').value.trim() || '📦';
+            const imageUrl = document.getElementById('product-image-url').value.trim();
+            const description = document.getElementById('product-description').value.trim();
+            const colors = document.getElementById('product-colors').value.trim();
+            const limited = document.getElementById('product-limited').checked;
+            const stock = limited ? parseInt(document.getElementById('product-stock').value) || 1 : null;
+            const onSale = document.getElementById('product-on-sale').checked;
+            const salePrice = onSale ? parseFloat(document.getElementById('product-sale-price').value) : null;
+            const visible = document.getElementById('product-visible').checked;
+            
+            // Validaciones
+            if (!name || !price || !category) {
+                alert('Por favor, completa los campos obligatorios (nombre, precio y categoría)');
+                return;
+            }
+            
+            if (onSale && (!salePrice || salePrice >= price)) {
+                alert('El precio de oferta debe ser menor que el precio original');
+                return;
+            }
+            
+            if (limited && (!stock || stock < 1)) {
+                alert('Si el producto es limitado, debe tener al menos 1 unidad en stock');
+                return;
+            }
+            
+            let product;
+            
+            if (isEditingProduct && currentProductId) {
+                // Editar producto existente
+                product = products.find(p => p.id === currentProductId);
+                if (!product) return;
+                
+                product.name = name;
+                product.price = price;
+                product.category = category;
+                product.rarity = rarity;
+                product.rating = rating;
+                product.imageType = imageType;
+                product.emoji = imageType === 'emoji' ? emoji : null;
+                product.imageUrl = imageType === 'url' ? imageUrl : null;
+                product.description = description;
+                product.colors = colors;
+                product.limited = limited;
+                product.stock = stock;
+                product.onSale = onSale;
+                product.salePrice = salePrice;
+                product.visible = visible;
+                
+                alert('Producto actualizado correctamente');
+            } else {
+                // Crear nuevo producto
+                product = {
+                    id: 'prod_' + Date.now() + Math.random().toString(36).substr(2, 9),
+                    name,
+                    price,
+                    category,
+                    rarity,
+                    rating,
+                    imageType,
+                    emoji: imageType === 'emoji' ? emoji : null,
+                    imageUrl: imageType === 'url' ? imageUrl : null,
+                    description,
+                    colors,
+                    limited,
+                    stock,
+                    onSale,
+                    salePrice,
+                    visible,
+                    createdAt: new Date().toISOString()
+                };
+                
+                products.push(product);
+                alert('Producto agregado correctamente');
+            }
+            
+            localStorage.setItem('chasProducts', JSON.stringify(products));
+            closeAddProductModal();
+            loadProducts();
+            loadCategories();
+            loadProductsManagement();
+        }
+        
+        // Funciones auxiliares para productos
+        function setImageOption(type) {
+            document.querySelectorAll('.image-option-btn').forEach(btn => {
+                btn.classList.remove('active');
+                btn.removeAttribute('data-type');
+            });
+            
+            const activeBtn = type === 'emoji' ? 
+                document.querySelector('.image-option-btn:first-child') : 
+                document.querySelector('.image-option-btn:last-child');
+            
+            activeBtn.classList.add('active');
+            activeBtn.setAttribute('data-type', type);
+            
+            document.getElementById('emoji-input-container').classList.remove('active');
+            document.getElementById('url-input-container').classList.remove('active');
+            
+            if (type === 'emoji') {
+                document.getElementById('emoji-input-container').classList.add('active');
+            } else {
+                document.getElementById('url-input-container').classList.add('active');
+            }
+            
+            updateImagePreview();
+        }
+        
+        function updateImagePreview() {
+            const imageType = document.querySelector('.image-option-btn.active').getAttribute('data-type');
+            const previewEmoji = document.getElementById('preview-emoji');
+            const previewImage = document.getElementById('preview-image');
+            
+            if (imageType === 'emoji') {
+                const emoji = document.getElementById('product-emoji').value.trim() || '📦';
+                previewEmoji.textContent = emoji;
+                previewEmoji.style.display = 'flex';
+                previewImage.style.display = 'none';
+            } else {
+                const imageUrl = document.getElementById('product-image-url').value.trim();
+                if (imageUrl) {
+                    previewImage.src = imageUrl;
+                    previewImage.style.display = 'block';
+                    previewEmoji.style.display = 'none';
+                } else {
+                    previewEmoji.textContent = '📷';
+                    previewEmoji.style.display = 'flex';
+                    previewImage.style.display = 'none';
+                }
+            }
+        }
+        
+        function toggleLimitedFields() {
+            const isLimited = document.getElementById('product-limited').checked;
+            document.getElementById('product-stock').disabled = !isLimited;
+            if (!isLimited) {
+                document.getElementById('product-stock').value = '';
+            }
+        }
+        
+        function toggleSaleFields() {
+            const onSale = document.getElementById('product-on-sale').checked;
+            document.getElementById('product-sale-price').disabled = !onSale;
+            if (!onSale) {
+                document.getElementById('product-sale-price').value = '';
+            }
+        }
+        
+        // Funciones para inventario
+        function openInventory() {
+            const container = document.getElementById('inventory-items');
+            container.innerHTML = '';
+            
+            const userItems = userInventory[currentUser] || [];
+            
+            if (userItems.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #aaa; grid-column: 1 / -1; padding: 40px;">Tu inventario está vacío</p>';
+            } else {
+                userItems.forEach((item, index) => {
+                    const inventoryItem = document.createElement('div');
+                    inventoryItem.className = 'inventory-item';
+                    
+                    // Determinar si es artículo de colección (inventario)
+                    const isCollectionItem = categoryTypes[item.category] === 'inventory' || item.collectionCode;
+                    
+                    inventoryItem.innerHTML = `
+                        <div class="inventory-item-image-container">
+                            ${item.imageType === 'url' && item.imageUrl ? 
+                                `<img src="${item.imageUrl}" class="inventory-item-img" alt="${item.name}" onerror="this.onerror=null; this.style.display='none'; this.parentElement.innerHTML='<div class=\\'inventory-item-emoji\\'>📦</div>';">` : 
+                                `<div class="inventory-item-emoji">${item.emoji || '📦'}</div>`
+                            }
+                        </div>
+                        <span class="category-badge">${item.category}</span>
+                        <h4>${item.name}</h4>
+                        ${item.collectionCode ? `<div class="collection-code" onclick="showCode('${item.collectionCode}')">${item.collectionCode}</div>` : ''}
+                        <p style="font-size: 0.8rem; color: #aaa; margin-top: 5px;">Comprado: ${new Date(item.purchaseDate).toLocaleDateString()}</p>
+                        ${!isCollectionItem ? 
+                            `<button class="btn-use" onclick="useItem(${index})">Usar</button>` : 
+                            `<button class="btn-use" onclick="showCollectionCode(${index})">Ver Código</button>`
+                        }
+                    `;
+                    container.appendChild(inventoryItem);
+                });
+            }
+            
+            document.getElementById('inventory-modal').classList.remove('hidden');
+        }
+        
+        function useItem(index) {
+            const item = userInventory[currentUser][index];
+            alert(`Has usado: ${item.name}`);
+            
+            // Eliminar del inventario después de usarlo una vez
+            userInventory[currentUser].splice(index, 1);
+            localStorage.setItem('chasInventory', JSON.stringify(userInventory));
+            openInventory();
+        }
+        
+        function showCollectionCode(index) {
+            const item = userInventory[currentUser][index];
+            if (!item.collectionCode) return;
+            
+            alert(`Código de colección: ${item.collectionCode}\n\nEste código es solo para colección, no tiene utilidad funcional.`);
+        }
+        
+        function showCode(code) {
+            alert(`Código: ${code}`);
+        }
+        
+        // Funciones para carrito
+        function openCart() {
+            const container = document.getElementById('cart-items');
+            container.innerHTML = '';
+            
+            const cartItems = userCart[currentUser] || [];
+            
+            if (cartItems.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #aaa; padding: 30px;">Tu carrito está vacío</p>';
+            } else {
+                let total = 0;
+                
+                cartItems.forEach((item, index) => {
+                    const price = item.onSale ? item.salePrice : item.price;
+                    total += price;
+                    
+                    const cartItem = document.createElement('div');
+                    cartItem.className = 'account-item';
+                    cartItem.style.marginBottom = '15px';
+                    cartItem.innerHTML = `
+                        <div class="account-info">
+                            <div class="account-username">${item.name}</div>
+                            <div style="color: #aaa; font-size: 0.9rem;">${item.category}</div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <div style="font-weight: 600; color: var(--accent);">${price} Chas</div>
+                            <button class="btn-block" style="padding: 5px 10px; font-size: 0.8rem;" onclick="removeFromCart(${index})">Eliminar</button>
+                        </div>
+                    `;
+                    container.appendChild(cartItem);
+                });
+                
+                document.getElementById('cart-total').textContent = total;
+            }
+            
+            document.getElementById('cart-modal').classList.remove('hidden');
+        }
+        
+        function removeFromCart(index) {
+            userCart[currentUser].splice(index, 1);
+            localStorage.setItem('chasCart', JSON.stringify(userCart));
+            updateCartCount();
+            openCart();
+        }
+        
+        function checkout() {
+            const user = users.find(u => u.username === currentUser);
+            const cartItems = userCart[currentUser] || [];
+            
+            if (cartItems.length === 0) {
+                alert('Tu carrito está vacío');
+                return;
+            }
+            
+            let total = 0;
+            cartItems.forEach(item => {
+                total += item.onSale ? item.salePrice : item.price;
+            });
+            
+            if (user.balance < total) {
+                alert('Saldo insuficiente para completar la compra');
+                return;
+            }
+            
+            // Restar saldo
+            user.balance -= total;
+            user.totalSpent = (user.totalSpent || 0) + total;
+            
+            // Procesar cada item del carrito
+            cartItems.forEach(item => {
+                // Registrar la venta
+                const saleRecord = {
+                    id: 'sale_' + Date.now() + Math.random().toString(36).substr(2, 9),
+                    productId: item.id,
+                    productName: item.name,
+                    price: item.onSale ? item.salePrice : item.price,
+                    username: currentUser,
+                    date: new Date().toISOString(),
+                    type: 'cart',
+                    status: 'completed',
+                    deliveryDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString() // 7 días después
+                };
+                
+                salesHistory.push(saleRecord);
+                
+                // Agregar a compras del usuario
+                if (!userPurchases[currentUser]) userPurchases[currentUser] = [];
+                userPurchases[currentUser].push(saleRecord);
+            });
+            
+            // Vaciar carrito
+            userCart[currentUser] = [];
+            
+            // Guardar cambios
+            localStorage.setItem('chasUsers', JSON.stringify(users));
+            localStorage.setItem('chasPurchases', JSON.stringify(userPurchases));
+            localStorage.setItem('chasCart', JSON.stringify(userCart));
+            localStorage.setItem('chasSalesHistory', JSON.stringify(salesHistory));
+            
+            // Actualizar UI
+            document.getElementById('user-balance').textContent = user.balance;
+            updateCartCount();
+            
+            alert(`¡Compra exitosa! Se han transferido ${total} Chas. Los productos llegarán en aproximadamente 7 días.`);
+            closeCartModal();
+            
+            // Actualizar estadísticas si es admin
+            if (currentUser === ADMIN_USERNAME) {
+                loadStats();
+            }
+        }
+        
+        function updateCartCount() {
+            const cartItems = userCart[currentUser] || [];
+            document.getElementById('cart-count').textContent = cartItems.length;
+        }
+        
+        // Funciones para compras del usuario
+        function openPurchases() {
+            const container = document.getElementById('purchases-list');
+            container.innerHTML = '';
+            
+            const purchases = userPurchases[currentUser] || [];
+            
+            if (purchases.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #aaa; padding: 30px;">No tienes compras realizadas</p>';
+            } else {
+                purchases.forEach((purchase, index) => {
+                    const canRefund = purchase.status === 'completed' && 
+                                     (new Date() - new Date(purchase.date)) < (7 * 24 * 60 * 60 * 1000); // 7 días para devolución
+                    
+                    const purchaseItem = document.createElement('div');
+                    purchaseItem.className = `purchase-item ${purchase.status === 'refunded' ? 'refunded' : ''}`;
+                    purchaseItem.innerHTML = `
+                        <div class="purchase-header">
+                            <div>
+                                <strong>${purchase.product || purchase.productName}</strong>
+                                <div style="font-size: 0.9rem; color: #aaa;">${new Date(purchase.date).toLocaleDateString()}</div>
+                            </div>
+                            <div class="purchase-status status-${purchase.status}">
+                                ${purchase.status === 'completed' ? 'COMPLETADA' : 
+                                  purchase.status === 'refunded' ? 'DEVUELTA' : 'PENDIENTE'}
+                            </div>
+                        </div>
+                        <div style="margin-top: 10px;">
+                            <div>Precio: <strong>${purchase.price} Chas</strong></div>
+                            ${purchase.collectionCode ? `<div>Código de colección: <code>${purchase.collectionCode}</code></div>` : ''}
+                            ${purchase.deliveryDate ? `<div>Fecha de llegada estimada: ${new Date(purchase.deliveryDate).toLocaleDateString()}</div>` : ''}
+                        </div>
+                        ${canRefund && purchase.status !== 'refunded' ? 
+                            `<button class="btn-refund" onclick="requestRefund('${purchase.id}', ${index})">Solicitar Devolución</button>` : ''}
+                    `;
+                    container.appendChild(purchaseItem);
+                });
+            }
+            
+            document.getElementById('purchases-modal').classList.remove('hidden');
+        }
+        
+        function requestRefund(saleId, purchaseIndex) {
+            if (!confirm('¿Estás seguro de que quieres solicitar la devolución de este producto?')) {
+                return;
+            }
+            
+            // Buscar la venta en el historial
+            const saleIndex = salesHistory.findIndex(s => s.id === saleId);
+            if (saleIndex === -1) return;
+            
+            const sale = salesHistory[saleIndex];
+            const user = users.find(u => u.username === currentUser);
+            
+            if (!user) return;
+            
+            // Calcular reembolso (98% del precio original)
+            const refundAmount = Math.floor(sale.price * 0.98);
+            
+            // Actualizar estado de la venta
+            sale.status = 'refunded';
+            sale.refundDate = new Date().toISOString();
+            sale.refundAmount = refundAmount;
+            
+            // Actualizar compra del usuario
+            if (userPurchases[currentUser] && userPurchases[currentUser][purchaseIndex]) {
+                userPurchases[currentUser][purchaseIndex].status = 'refunded';
+                userPurchases[currentUser][purchaseIndex].refundAmount = refundAmount;
+            }
+            
+            // Reembolsar al usuario
+            user.balance += refundAmount;
+            user.totalSpent = (user.totalSpent || 0) - sale.price;
+            
+            // Si el producto estaba en el inventario, eliminarlo
+            if (sale.type === 'inventory') {
+                userInventory[currentUser] = userInventory[currentUser].filter(item => item.saleId !== saleId);
+            }
+            
+            // Guardar cambios
+            localStorage.setItem('chasSalesHistory', JSON.stringify(salesHistory));
+            localStorage.setItem('chasPurchases', JSON.stringify(userPurchases));
+            localStorage.setItem('chasUsers', JSON.stringify(users));
+            localStorage.setItem('chasInventory', JSON.stringify(userInventory));
+            
+            // Actualizar UI
+            document.getElementById('user-balance').textContent = user.balance;
+            alert(`Devolución procesada. Se te han reembolsado ${refundAmount} Chas (98% del precio original).`);
+            
+            // Recargar compras
+            openPurchases();
+            
+            // Actualizar estadísticas si es admin
+            if (currentUser === ADMIN_USERNAME) {
+                loadStats();
+                loadSalesHistory();
+            }
+        }
+        
+        // Funciones para códigos de canje (Chas)
+        function generateChasCode() {
+            const amount = parseInt(document.getElementById('code-amount').value);
+            const maxUses = parseInt(document.getElementById('code-uses').value) || 0; // 0 = ilimitado
+            const expiryDays = parseInt(document.getElementById('code-expiry').value) || 0; // 0 = sin expiración
+            
+            if (!amount || amount < 1) {
+                alert('Por favor, ingresa una cantidad válida de Chas');
+                return;
+            }
+            
+            // Generar código
+            const code = generateCollectionCode(8);
+            
+            // Calcular fecha de expiración
+            let expiryDate = null;
+            if (expiryDays > 0) {
+                expiryDate = new Date();
+                expiryDate.setDate(expiryDate.getDate() + expiryDays);
+                expiryDate = expiryDate.toISOString();
+            }
+            
+            // Guardar código
+            const codeData = {
+                code: code,
+                amount: amount,
+                maxUses: maxUses,
+                uses: 0,
+                expiryDate: expiryDate,
+                createdAt: new Date().toISOString()
+            };
+            
+            chasCodes.push(codeData);
+            localStorage.setItem('chasCodes', JSON.stringify(chasCodes));
+            
+            // Mostrar código generado
+            alert(`Código Chas generado: ${code}\n\nCantidad: ${amount} Chas\nUsos máximos: ${maxUses === 0 ? 'Ilimitado' : maxUses}\n${expiryDate ? 'Válido hasta: ' + new Date(expiryDate).toLocaleDateString() : 'Sin fecha de expiración'}`);
+            
+            // Limpiar campos
+            document.getElementById('code-amount').value = '';
+            document.getElementById('code-uses').value = '';
+            document.getElementById('code-expiry').value = '';
+            
+            // Actualizar lista de códigos
+            loadGeneratedChasCodes();
+        }
+        
+        function loadGeneratedChasCodes() {
+            const codesContainer = document.getElementById('generated-chas-codes');
+            if (!codesContainer) return;
+            
+            codesContainer.innerHTML = '';
+            
+            if (chasCodes.length === 0) {
+                codesContainer.innerHTML = '<p style="color: #aaa; text-align: center;">No hay códigos Chas generados</p>';
+                return;
+            }
+            
+            chasCodes.forEach((codeData, index) => {
+                const codeDiv = document.createElement('div');
+                codeDiv.style.background = 'rgba(255,255,255,0.05)';
+                codeDiv.style.padding = '10px';
+                codeDiv.style.borderRadius = '8px';
+                codeDiv.style.marginBottom = '10px';
+                codeDiv.style.border = '1px solid rgba(255,255,255,0.1)';
+                
+                let expiryText = 'Sin expiración';
+                if (codeData.expiryDate) {
+                    const expiry = new Date(codeData.expiryDate);
+                    const now = new Date();
+                    if (expiry < now) {
+                        expiryText = '<span style="color: var(--danger);">Expirado</span>';
+                    } else {
+                        expiryText = 'Válido hasta: ' + expiry.toLocaleDateString();
+                    }
+                }
+                
+                let usesText = codeData.maxUses === 0 ? 'Usos ilimitados' : `Usos: ${codeData.uses}/${codeData.maxUses}`;
+                
+                codeDiv.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <strong style="font-family: monospace; font-size: 1.1rem;">${codeData.code}</strong>
+                            <div style="font-size: 0.9rem; color: #aaa;">
+                                ${codeData.amount} Chas | ${usesText} | ${expiryText}
+                            </div>
+                        </div>
+                        <button onclick="deleteChasCode(${index})" style="padding: 5px 10px; background: var(--danger); color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 0.8rem;">
+                            Eliminar
+                        </button>
+                    </div>
+                `;
+                codesContainer.appendChild(codeDiv);
+            });
+        }
+        
+        function deleteChasCode(index) {
+            if (!confirm('¿Estás seguro de que quieres eliminar este código Chas?')) {
+                return;
+            }
+            
+            chasCodes.splice(index, 1);
+            localStorage.setItem('chasCodes', JSON.stringify(chasCodes));
+            loadGeneratedChasCodes();
+            alert('Código Chas eliminado');
+        }
+        
+        // Funciones para códigos de inventario
+        function generateInventoryCode() {
+            const length = parseInt(document.getElementById('inventory-code-length').value) || 8;
+            const amount = parseInt(document.getElementById('inventory-code-amount').value) || 1;
+            
+            // Generar códigos
+            const newCodes = [];
+            for (let i = 0; i < amount; i++) {
+                const code = generateCollectionCode(length);
+                newCodes.push({
+                    code: code,
+                    generatedAt: new Date().toISOString(),
+                    used: false
+                });
+            }
+            
+            // Agregar a la lista
+            inventoryCodes.push(...newCodes);
+            localStorage.setItem('chasInventoryCodes', JSON.stringify(inventoryCodes));
+            
+            // Mostrar códigos generados
+            let codesText = '';
+            newCodes.forEach(codeData => {
+                codesText += `${codeData.code}\n`;
+            });
+            
+            alert(`Se generaron ${amount} código(s) de inventario:\n\n${codesText}\nEstos códigos no otorgan Chas, solo son para colección.`);
+            
+            // Limpiar campos
+            document.getElementById('inventory-code-length').value = '8';
+            document.getElementById('inventory-code-amount').value = '1';
+            
+            // Actualizar lista de códigos
+            loadGeneratedInventoryCodes();
+        }
+        
+        function loadGeneratedInventoryCodes() {
+            const codesContainer = document.getElementById('generated-inventory-codes');
+            if (!codesContainer) return;
+            
+            codesContainer.innerHTML = '';
+            
+            if (inventoryCodes.length === 0) {
+                codesContainer.innerHTML = '<p style="color: #aaa; text-align: center;">No hay códigos de inventario generados</p>';
+                return;
+            }
+            
+            inventoryCodes.forEach((codeData, index) => {
+                const codeDiv = document.createElement('div');
+                codeDiv.style.background = 'rgba(255,255,255,0.05)';
+                codeDiv.style.padding = '10px';
+                codeDiv.style.borderRadius = '8px';
+                codeDiv.style.marginBottom = '10px';
+                codeDiv.style.border = '1px solid rgba(255,255,255,0.1)';
+                
+                codeDiv.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <strong style="font-family: monospace; font-size: 1.1rem;">${codeData.code}</strong>
+                            <div style="font-size: 0.9rem; color: #aaa;">
+                                Generado: ${new Date(codeData.generatedAt).toLocaleDateString()} | 
+                                Estado: ${codeData.used ? '<span style="color: var(--danger);">Usado</span>' : '<span style="color: var(--success);">Disponible</span>'}
+                            </div>
+                        </div>
+                        <button onclick="deleteInventoryCode(${index})" style="padding: 5px 10px; background: var(--danger); color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 0.8rem;">
+                            Eliminar
+                        </button>
+                    </div>
+                `;
+                codesContainer.appendChild(codeDiv);
+            });
+        }
+        
+        function deleteInventoryCode(index) {
+            if (!confirm('¿Estás seguro de que quieres eliminar este código de inventario?')) {
+                return;
+            }
+            
+            inventoryCodes.splice(index, 1);
+            localStorage.setItem('chasInventoryCodes', JSON.stringify(inventoryCodes));
+            loadGeneratedInventoryCodes();
+            alert('Código de inventario eliminado');
+        }
+        
+        // Función para canjear códigos
+        function openRedeem() {
+            document.getElementById('redeem-code').value = '';
+            document.getElementById('redeem-message').classList.add('hidden');
+            document.getElementById('redeem-modal').classList.remove('hidden');
+        }
+        
+        function redeemCode() {
+            const codeInput = document.getElementById('redeem-code').value.trim().toUpperCase();
+            const messageDiv = document.getElementById('redeem-message');
+            
+            if (!codeInput) {
+                showMessage(messageDiv, 'Por favor, ingresa un código', 'error');
+                return;
+            }
+            
+            const user = users.find(u => u.username === currentUser);
+            if (!user) return;
+            
+            // Buscar código en códigos Chas
+            const chasCodeData = chasCodes.find(c => c.code === codeInput);
+            
+            if (chasCodeData) {
+                // Verificar si ha expirado
+                if (chasCodeData.expiryDate) {
+                    const expiry = new Date(chasCodeData.expiryDate);
+                    const now = new Date();
+                    if (expiry < now) {
+                        showMessage(messageDiv, 'Este código ha expirado', 'error');
+                        return;
+                    }
+                }
+                
+                // Verificar usos máximos
+                if (chasCodeData.maxUses > 0 && chasCodeData.uses >= chasCodeData.maxUses) {
+                    showMessage(messageDiv, 'Este código ha alcanzado el límite de usos', 'error');
+                    return;
+                }
+                
+                // Aplicar código
+                user.balance += chasCodeData.amount;
+                chasCodeData.uses += 1;
+                
+                // Guardar cambios
+                localStorage.setItem('chasUsers', JSON.stringify(users));
+                localStorage.setItem('chasCodes', JSON.stringify(chasCodes));
+                
+                // Actualizar UI
+                document.getElementById('user-balance').textContent = user.balance;
+                showMessage(messageDiv, `¡Código canjeado! Has recibido ${chasCodeData.amount} Chas.`, 'success');
+                
+                // Limpiar campo
+                document.getElementById('redeem-code').value = '';
+                
+                // Actualizar lista de códigos si es admin
+                if (currentUser === ADMIN_USERNAME) {
+                    loadGeneratedChasCodes();
+                }
+                return;
+            }
+            
+            // Buscar código en códigos de inventario
+            const inventoryCodeData = inventoryCodes.find(c => c.code === codeInput);
+            
+            if (inventoryCodeData) {
+                if (inventoryCodeData.used) {
+                    showMessage(messageDiv, 'Este código de inventario ya ha sido usado', 'error');
+                    return;
+                }
+                
+                // Marcar como usado
+                inventoryCodeData.used = true;
+                localStorage.setItem('chasInventoryCodes', JSON.stringify(inventoryCodes));
+                
+                showMessage(messageDiv, `Código de inventario canjeado. Este código es solo para colección.`, 'success');
+                
+                // Limpiar campo
+                document.getElementById('redeem-code').value = '';
+                
+                // Actualizar lista de códigos si es admin
+                if (currentUser === ADMIN_USERNAME) {
+                    loadGeneratedInventoryCodes();
+                }
+                return;
+            }
+            
+            // Código no encontrado
+            showMessage(messageDiv, 'Código inválido o no encontrado', 'error');
+        }
+        
+        // Funciones para registro de ventas
+        function loadSalesHistory() {
+            const salesContainer = document.getElementById('sales-list');
+            if (!salesContainer) return;
+            
+            salesContainer.innerHTML = '';
+            
+            if (salesHistory.length === 0) {
+                salesContainer.innerHTML = '<p style="text-align: center; color: #aaa; padding: 20px;">No hay registros de ventas</p>';
+                return;
+            }
+            
+            // Mostrar últimas 20 ventas
+            const recentSales = salesHistory.slice(-20).reverse();
+            
+            recentSales.forEach(sale => {
+                const saleDiv = document.createElement('div');
+                saleDiv.className = 'account-item';
+                saleDiv.style.marginBottom = '10px';
+                
+                const statusColor = sale.status === 'completed' ? 'var(--success)' : 
+                                  sale.status === 'refunded' ? 'var(--danger)' : 'var(--warning)';
+                
+                saleDiv.innerHTML = `
+                    <div class="account-info">
+                        <div class="account-username">${sale.productName}</div>
+                        <div style="font-size: 0.9rem; color: #aaa;">
+                            Usuario: ${sale.username} | 
+                            Fecha: ${new Date(sale.date).toLocaleDateString()} | 
+                            Tipo: ${sale.type === 'cart' ? 'Carrito' : 'Inventario'}
+                        </div>
+                        <div style="font-size: 0.9rem;">
+                            Precio: <span style="color: var(--accent); font-weight: 600;">${sale.price} Chas</span> | 
+                            Estado: <span style="color: ${statusColor}; font-weight: 600;">
+                                ${sale.status === 'completed' ? 'COMPLETADA' : 
+                                 sale.status === 'refunded' ? 'DEVUELTA' + (sale.refundAmount ? ` (${sale.refundAmount} Chas reembolsados)` : '') : 'PENDIENTE'}
+                            </span>
+                        </div>
+                    </div>
+                `;
+                salesContainer.appendChild(saleDiv);
+            });
+        }
+        
+        function refreshSales() {
+            loadSalesHistory();
+            alert('Registro de ventas actualizado');
+        }
+        
+        // Funciones para configuración
+        function openSettings() {
+            // Mostrar panel secreto si es admin
+            const user = users.find(u => u.username === currentUser);
+            if (user && user.isAdmin) {
+                document.getElementById('secret-panel').classList.remove('hidden');
+                // Activar pestaña de estadísticas por defecto
+                switchSecretTab('stats');
+            } else {
+                document.getElementById('secret-panel').classList.add('hidden');
+            }
+            
+            document.getElementById('settings-modal').classList.remove('hidden');
+        }
+        
+        // Funciones para cerrar modales
+        function closeAddProductModal() {
+            document.getElementById('add-product-modal').classList.add('hidden');
+        }
+        
+        function closeInventoryModal() {
+            document.getElementById('inventory-modal').classList.add('hidden');
+        }
+        
+        function closePurchasesModal() {
+            document.getElementById('purchases-modal').classList.add('hidden');
+        }
+        
+        function closeSettingsModal() {
+            document.getElementById('settings-modal').classList.add('hidden');
+        }
+        
+        function closeCartModal() {
+            document.getElementById('cart-modal').classList.add('hidden');
+        }
+        
+        function closeRedeemModal() {
+            document.getElementById('redeem-modal').classList.add('hidden');
+            document.getElementById('redeem-message').classList.add('hidden');
+        }
+        
+        function closeUserPurchasesModal() {
+            document.getElementById('user-purchases-modal').classList.add('hidden');
+        }
+        
+        // Funciones auxiliares
+        function showMessage(element, message, type) {
+            element.textContent = message;
+            element.className = `message ${type}`;
+            element.classList.remove('hidden');
+        }
+        
+        function getRarityText(rarity) {
+            const texts = {
+                'common': 'Común',
+                'rare': 'Raro',
+                'legendary': 'Legendario',
+                'mythical': 'Mítico',
+                'exclusive': 'Exclusivo'
+            };
+            return texts[rarity] || 'Común';
+        }
+        
+        function getRatingStars(rating) {
+            let stars = '';
+            for (let i = 1; i <= 5; i++) {
+                if (i <= rating) {
+                    stars += '<i class="fas fa-star"></i>';
+                } else if (i - 0.5 <= rating) {
+                    stars += '<i class="fas fa-star-half-alt"></i>';
+                } else {
+                    stars += '<i class="far fa-star"></i>';
+                }
+            }
+            return stars;
+        }
+        
+        // Inicializar con algunos productos de ejemplo si no hay
+        if (products.length === 0) {
+            products = [
+                {
+                    id: 'prod_1',
+                    name: 'Camiseta Elegante',
+                    price: 150,
+                    category: 'Ropa',
+                    rarity: 'common',
+                    rating: 4.5,
+                    imageType: 'emoji',
+                    emoji: '👕',
+                    description: 'Camiseta de alta calidad con diseño exclusivo',
+                    colors: 'Negro, Blanco, Azul',
+                    limited: false,
+                    onSale: false,
+                    visible: true,
+                    createdAt: new Date().toISOString()
+                },
+                {
+                    id: 'prod_2',
+                    name: 'Auriculares Premium',
+                    price: 350,
+                    category: 'Electrónica',
+                    rarity: 'rare',
+                    rating: 4.8,
+                    imageType: 'url',
+                    imageUrl: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400',
+                    description: 'Auriculares con cancelación de ruido',
+                    colors: 'Negro, Plateado',
+                    limited: true,
+                    stock: 5,
+                    onSale: true,
+                    salePrice: 299,
+                    visible: true,
+                    createdAt: new Date().toISOString()
+                },
+                {
+                    id: 'prod_3',
+                    name: 'Figura Coleccionable',
+                    price: 500,
+                    category: 'Juguetes',
+                    rarity: 'legendary',
+                    rating: 4.9,
+                    imageType: 'emoji',
+                    emoji: '🎭',
+                    description: 'Figura exclusiva edición limitada',
+                    colors: 'Multicolor',
+                    limited: true,
+                    stock: 10,
+                    onSale: false,
+                    visible: true,
+                    createdAt: new Date().toISOString()
+                }
+            ];
+            
+            localStorage.setItem('chasProducts', JSON.stringify(products));
+        }
+    </script>
+</body>
+</html>
